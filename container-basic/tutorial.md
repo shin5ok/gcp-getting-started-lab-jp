@@ -200,7 +200,7 @@ Go言語で作成されたサンプル Web アプリケーションをコンテ�
 ここで作成したコンテナはローカルディスクに保存されます。
 
 ```bash
-docker build -t gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1 .
+docker build -t gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1 .
 ```
 
 **ヒント**: `docker build` コマンドを叩くと、Dockerfile が読み込まれ、そこに記載されている手順通りにコンテナが作成されます。
@@ -211,10 +211,10 @@ docker build -t gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1 .
 
 ```bash
 docker run -d -p 8080:8080 \
---name devops-handson \
+--name container-handson \
 -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/auth.json \
 -v $PWD/auth.json:/tmp/keys/auth.json:ro \
-gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1
+gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1
 ```
 
 **ヒント**: Cloud Shell 環境の 8080 ポートを、コンテナの 8080 ポートに紐付け、バックグラウンドで起動します。
@@ -231,7 +231,7 @@ gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1
 
 正しくアプリケーションにアクセスできると、下記のような画面が表示されます。
 
-![BrowserAccessToMainController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToMainController.png)
+![BrowserAccessToMainController](https://storage.googleapis.com/container-handson-for-github/BrowserAccessToMainController.png)
 
 <walkthrough-footnote>ローカル環境（Cloud Shell 内）で動いているコンテナにアクセスできました。次に GKE で動かすための準備を進めます。</walkthrough-footnote>
 
@@ -244,7 +244,7 @@ gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1
 ### 作成したコンテナをコンテナレジストリ（Google Container Registry）へ登録（プッシュ）する
 
 ```bash
-docker push gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1
+docker push gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1
 ```
 
 **GUI**: [コンテナレジストリ](https://console.cloud.google.com/gcr/images/{{project-id}}?project={{project-id}})
@@ -259,7 +259,7 @@ docker push gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson:v1
 ### GKE クラスターを作成する
 
 ```bash
-gcloud beta container clusters create "k8s-devops-handson"  \
+gcloud beta container clusters create "k8s-container-handson"  \
 --image-type "COS" \
 --scopes "https://www.googleapis.com/auth/cloud-platform" \
 --enable-stackdriver-kubernetes \
@@ -284,7 +284,7 @@ Kubernetes には専用の [CLI ツール（kubectl）](https://kubernetes.io/do
 認証情報を取得し、作成したクラスターを操作できるようにします。
 
 ```bash
-gcloud container clusters get-credentials k8s-devops-handson
+gcloud container clusters get-credentials k8s-container-handson
 ```
 
 <walkthrough-footnote>これで kubectl コマンドから作成したクラスターを操作できるようになりました。次に作成済みのコンテナをクラスターにデプロイします。</walkthrough-footnote>
@@ -339,7 +339,7 @@ kubectl apply -f gke-config/
 デプロイしたコンテナへのアクセスを待ち受ける Service の IP アドレスを確認します。
 
 ```bash
-kubectl get service devops-handson-loadbalancer -w
+kubectl get service container-handson-loadbalancer -w
 ```
 
 このコマンドは対象のリソース状態を監視（watch）します。グローバル IP アドレスが付与されたら Ctrl + C を押してキャンセルしてください。
@@ -351,7 +351,7 @@ kubectl get service devops-handson-loadbalancer -w
 下記のコマンドを実行し出力された URL をクリックし、アクセスします。
 
 ```bash
-export SERVICE_IP=$(kubectl get service devops-handson-loadbalancer -ojsonpath='{.status.loadBalancer.ingress[0].ip}'); echo "http://${SERVICE_IP}/"
+export SERVICE_IP=$(kubectl get service container-handson-loadbalancer -ojsonpath='{.status.loadBalancer.ingress[0].ip}'); echo "http://${SERVICE_IP}/"
 ```
 
 <walkthrough-footnote>アプリケーションにインターネット経由でアクセスすることができました。次にアクセスに時間がかかるページの調査を行います。</walkthrough-footnote>
@@ -368,7 +368,7 @@ echo "http://${SERVICE_IP}/bench1"
 
 **ヒント**: 意図的に処理に時間がかかるようにアプリケーションを作成しています。
 
-![BrowserAccessToSlowBenchController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToSlowBenchController.png)
+![BrowserAccessToSlowBenchController](https://storage.googleapis.com/container-handson-for-github/BrowserAccessToSlowBenchController.png)
 
 ### 擬似的にアクセス負荷をかける
 
@@ -430,7 +430,7 @@ Operations を利用しアプリケーションのトラブルシューティン
 3. ログを表示をクリック
 4. “I” と表示されるアイコンをクリックして、連携された Cloud logging のログを確認
 
-![Trace](https://storage.googleapis.com/devops-handson-for-github/StackdriverTrace.png)
+![Trace](https://storage.googleapis.com/container-handson-for-github/StackdriverTrace.png)
 
 **ヒント**: 今回は 1 アプリケーションの中の処理呼び出しを見ています。しかしこの分散トレーシングはユーザーの 1 リクエストが複数のサービスで構成されるような、マイクロサービスアーキテクチャで特に有用です。
 
@@ -444,11 +444,11 @@ Operations を利用しアプリケーションのトラブルシューティン
 
 [トレースリストのページ](https://console.cloud.google.com/traces/traces?project={{project-id}}) のページで `/bench1` のトレースを表示し、ログの横に表示されている 表示リンク をクリックします。
 
-![TraceToLogging](https://storage.googleapis.com/devops-handson-for-github/StackdriverTraceToStackdriverLogging.png)
+![TraceToLogging](https://storage.googleapis.com/container-handson-for-github/StackdriverTraceToStackdriverLogging.png)
 
 Logging のページに遷移し、関連するログが表示されていることを確認します。
 
-![Logging](https://storage.googleapis.com/devops-handson-for-github/StackdriverLogging.png)
+![Logging](https://storage.googleapis.com/container-handson-for-github/StackdriverLogging.png)
 
 [アプリケーションログ](https://console.cloud.google.com/logs/viewer?project={{project-id}}&resource=k8s_container)も確認可能です。
 
@@ -459,7 +459,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 
 [プロファイラ](https://console.cloud.google.com/profiler/devops-demo;zone=asia-northeast1-c;version=1.0.0/cpu?project={{project-id}}) を開き、fibonacci という関数の処理にリソースが使われていることを確認します。
 
-![Profiler](https://storage.googleapis.com/devops-handson-for-github/StackdriverProfiler.png)
+![Profiler](https://storage.googleapis.com/container-handson-for-github/StackdriverProfiler.png)
 
 `プロファイルの種類` を切り替えることで、様々な情報を見ることができます。
 
@@ -529,10 +529,10 @@ gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT  --member serviceAc
 今回利用しているソースコードを配置するためのプライベート Git リポジトリを、Cloud Source Repository（CSR）に作成します。
 
 ```bash
-gcloud source repos create devops-handson
+gcloud source repos create container-handson
 ```
 
-**GUI**: [Source Repository](https://source.cloud.google.com/{{project-id}}/devops-handson): 作成前にアクセスすると拒否されます。
+**GUI**: [Source Repository](https://source.cloud.google.com/{{project-id}}/container-handson): 作成前にアクセスすると拒否されます。
 
 <walkthrough-footnote>資材を格納する Git リポジトリを作成しました。次にこのリポジトリに更新があったときにそれを検知し、処理を開始するトリガーを作成します。</walkthrough-footnote>
 
@@ -542,7 +542,7 @@ gcloud source repos create devops-handson
 Cloud Build に前の手順で作成した、プライベート Git リポジトリに push が行われたときに起動されるトリガーを作成します。
 
 ```bash
-gcloud beta builds triggers create cloud-source-repositories --description="devopshandson" --repo=devops-handson --branch-pattern=".*" --build-config="devops/cloudbuild.yaml"
+gcloud beta builds triggers create cloud-source-repositories --description="devopshandson" --repo=container-handson --branch-pattern=".*" --build-config="devops/cloudbuild.yaml"
 ```
 
 **GUI**: [ビルドトリガー](https://console.cloud.google.com/cloud-build/triggers?project={{project-id}})
@@ -587,7 +587,7 @@ CSR を Git のリモートレポジトリとして登録します。
 これで git コマンドを使い Cloud Shell 上にあるファイル群を管理することができます。
 
 ```bash
-git remote add google https://source.developers.google.com/p/$GOOGLE_CLOUD_PROJECT/r/devops-handson
+git remote add google https://source.developers.google.com/p/$GOOGLE_CLOUD_PROJECT/r/container-handson
 ```
 
 <walkthrough-footnote>以前の手順で作成した CSR のリポジトリと、Cloud Shell 上にある資材を紐付けました。次にその資材をプッシュします。</walkthrough-footnote>
@@ -602,7 +602,7 @@ git push コマンドを使い、CSR に資材を転送（プッシュ）しま�
 git push google master
 ```
 
-**GUI**: [Source Repository](https://source.cloud.google.com/{{project-id}}/devops-handson) から資材がプッシュされたことを確認できます。
+**GUI**: [Source Repository](https://source.cloud.google.com/{{project-id}}/container-handson) から資材がプッシュされたことを確認できます。
 
 <walkthrough-footnote>Cloud Shell 上にある資材を CSR のリポジトリにプッシュしました。次に資材の更新をトリガーに処理が始まっている Cloud Build を確認します。</walkthrough-footnote>
 
@@ -618,7 +618,7 @@ git push google master
 ビルドが正常に完了後、以下コマンドを実行し、Cloud Build で作成したコンテナがデプロイされていることを確認します。
 
 ```bash
-kubectl describe deployment/devops-handson-deployment | grep Image
+kubectl describe deployment/container-handson-deployment | grep Image
 ```
 
 `error: You must be logged in to the server (Unauthorized)` というメッセージが出た場合は、再度コマンドを実行してみてください。
@@ -626,10 +626,10 @@ kubectl describe deployment/devops-handson-deployment | grep Image
 コマンド実行結果の例。
 
 ```
-    Image:        gcr.io/{{project-id}}/devops-handson:COMMITHASH
+    Image:        gcr.io/{{project-id}}/container-handson:COMMITHASH
 ```
 
-Cloud Build 実行前は Image が `gcr.io/{{project-id}}/devops-handson:v1` となっていますが、実行後は `gcr.io/{{project-id}}/devops-handson:COMMITHASH` になっている事が分かります。
+Cloud Build 実行前は Image が `gcr.io/{{project-id}}/container-handson:v1` となっていますが、実行後は `gcr.io/{{project-id}}/container-handson:COMMITHASH` になっている事が分かります。
 実際は、COMMITHASH には Git のコミットハッシュ値が入ります。
 
 <walkthrough-footnote>資材を更新、プッシュをトリガーとしたアプリケーションのビルド、コンテナ化、GKE へのデプロイを行うパイプラインが完成しました。次はチャレンジ問題を用意しています。</walkthrough-footnote>
@@ -697,7 +697,7 @@ gcloud projects delete {{project-id}}
 ### GKE クラスターの削除
 
 ```bash
-gcloud container clusters delete k8s-devops-handson --quiet
+gcloud container clusters delete k8s-container-handson --quiet
 ```
 
 ### アプリケーション用サービスアカウントの削除
@@ -715,13 +715,13 @@ gcloud projects remove-iam-policy-binding $GOOGLE_CLOUD_PROJECT  --member servic
 ### Cloud Source Repository のリポジトリの削除
 
 ```bash
-gcloud source repos delete devops-handson --quiet
+gcloud source repos delete container-handson --quiet
 ```
 
 ### Container Registry に登録しているコンテナイメージの削除
 
 ```bash
-gcloud container images list-tags gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson --format="csv[no-heading](DIGEST)" | xargs -I{} gcloud container images delete gcr.io/$GOOGLE_CLOUD_PROJECT/devops-handson@sha256:{} --force-delete-tags --quiet
+gcloud container images list-tags gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson --format="csv[no-heading](DIGEST)" | xargs -I{} gcloud container images delete gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson@sha256:{} --force-delete-tags --quiet
 ```
 
 ### Cloud Build トリガーの削除

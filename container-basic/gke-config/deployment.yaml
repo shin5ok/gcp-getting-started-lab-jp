@@ -15,16 +15,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devops-handson-deployment
+  name: container-handson-deployment
 spec:
   selector:
     matchLabels:
-      app: devops-handson
+      app: container-handson
   replicas: 2
   template:
     metadata:
       labels:
-        app: devops-handson
+        app: container-handson
     spec:
       volumes:
       - name: google-cloud-key
@@ -32,7 +32,7 @@ spec:
           secretName: dohandson-key
       containers:
       - name: myapp
-        image: gcr.io/FIXME/devops-handson:v1
+        image: gcr.io/FIXME/container-handson:v1
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
@@ -45,11 +45,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: devops-handson
+  name: container-handson
 spec:
   type: NodePort
   selector:
-    app: devops-handson
+    app: container-handson
   ports:
   - protocol: TCP
     port: 8080
@@ -58,8 +58,8 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: devops-handson-ingress
+  name: container-handson-ingress
 spec:
   backend:
-    serviceName: devops-handson
+    serviceName: container-handson
     servicePort: 8080
