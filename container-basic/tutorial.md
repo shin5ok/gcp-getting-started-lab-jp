@@ -231,7 +231,7 @@ gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1
 
 正しくアプリケーションにアクセスできると、下記のような画面が表示されます。
 
-![BrowserAccessToMainController](https://storage.googleapis.com/container-handson-for-github/BrowserAccessToMainController.png)
+![BrowserAccessToMainController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToMainController.png)
 
 <walkthrough-footnote>ローカル環境（Cloud Shell 内）で動いているコンテナにアクセスできました。次に GKE で動かすための準備を進めます。</walkthrough-footnote>
 
