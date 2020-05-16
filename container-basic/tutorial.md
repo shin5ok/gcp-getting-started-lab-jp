@@ -233,6 +233,12 @@ gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1
 
 ![BrowserAccessToMainController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToMainController.png)
 
+### ログの確認
+ログが出力されていることを確認します
+```bash
+docker logs -f $(docker ps -q)
+```
+
 <walkthrough-footnote>ローカル環境（Cloud Shell 内）で動いているコンテナにアクセスできました。次に GKE で動かすための準備を進めます。</walkthrough-footnote>
 
 
@@ -286,7 +292,10 @@ Kubernetes には専用の [CLI ツール（kubectl）](https://kubernetes.io/do
 ```bash
 gcloud container clusters get-credentials k8s-container-handson
 ```
-
+### 設定を確認します
+```bash
+kubectl config get-contexts
+```
 <walkthrough-footnote>これで kubectl コマンドから作成したクラスターを操作できるようになりました。次に作成済みのコンテナをクラスターにデプロイします。</walkthrough-footnote>
 
 
@@ -368,7 +377,7 @@ echo "http://${SERVICE_IP}/bench1"
 
 **ヒント**: 意図的に処理に時間がかかるようにアプリケーションを作成しています。
 
-![BrowserAccessToSlowBenchController](https://storage.googleapis.com/container-handson-for-github/BrowserAccessToSlowBenchController.png)
+![BrowserAccessToSlowBenchController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToSlowBenchController.png)
 
 ### 擬似的にアクセス負荷をかける
 
@@ -426,11 +435,12 @@ Operations を利用しアプリケーションのトラブルシューティン
 その情報を Cloud Trace から可視化することが可能です。
 
 1. [トレースリストのページ](https://console.cloud.google.com/traces/traces?project={{project-id}})にブラウザからアクセスし、リクエスト フィルタに `/bench1` を入力
+（**Preview**になっている場合は、**Classic**に切り替えてください）
 2. リクエストが遅い Span（青丸）を確認
 3. ログを表示をクリック
 4. “I” と表示されるアイコンをクリックして、連携された Cloud logging のログを確認
 
-![Trace](https://storage.googleapis.com/container-handson-for-github/StackdriverTrace.png)
+![Trace](https://storage.googleapis.com/devops-handson-for-github/StackdriverTrace.png)
 
 **ヒント**: 今回は 1 アプリケーションの中の処理呼び出しを見ています。しかしこの分散トレーシングはユーザーの 1 リクエストが複数のサービスで構成されるような、マイクロサービスアーキテクチャで特に有用です。
 
@@ -444,11 +454,11 @@ Operations を利用しアプリケーションのトラブルシューティン
 
 [トレースリストのページ](https://console.cloud.google.com/traces/traces?project={{project-id}}) のページで `/bench1` のトレースを表示し、ログの横に表示されている 表示リンク をクリックします。
 
-![TraceToLogging](https://storage.googleapis.com/container-handson-for-github/StackdriverTraceToStackdriverLogging.png)
+![TraceToLogging](https://storage.googleapis.com/devops-handson-for-github/StackdriverTraceToStackdriverLogging.png)
 
 Logging のページに遷移し、関連するログが表示されていることを確認します。
 
-![Logging](https://storage.googleapis.com/container-handson-for-github/StackdriverLogging.png)
+![Logging](https://storage.googleapis.com/devops-handson-for-github/StackdriverLogging.png)
 
 [アプリケーションログ](https://console.cloud.google.com/logs/viewer?project={{project-id}}&resource=k8s_container)も確認可能です。
 
@@ -459,7 +469,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 
 [プロファイラ](https://console.cloud.google.com/profiler/container-demo;zone=asia-northeast1-c;version=1.0.0/cpu?project={{project-id}}) を開き、fibonacci という関数の処理にリソースが使われていることを確認します。
 
-![Profiler](https://storage.googleapis.com/container-handson-for-github/StackdriverProfiler.png)
+![Profiler](https://storage.googleapis.com/devops-handson-for-github/StackdriverProfiler.png)
 
 `プロファイルの種類` を切り替えることで、様々な情報を見ることができます。
 
@@ -476,6 +486,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 サンプルアプリケーションでは context というオブジェクトの中身をログに出力しています。
 
 ここではそれがちゃんとログに出力されていることを確認します。
+（**Preview**になっている場合は、**Classic**に切り替えてください）
 
 ### 出力箇所の確認
 
@@ -521,6 +532,8 @@ export CB_SA=$(gcloud projects get-iam-policy $GOOGLE_CLOUD_PROJECT | grep cloud
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT  --member serviceAccount:$CB_SA --role roles/container.admin
 ```
 
+**GUI**: [IAM](https://console.cloud.google.com/iam-admin/iam?project={{project-id}})
+
 <walkthrough-footnote>Cloud Build で利用するサービスアカウントに権限を付与し、Kubernetes に自動デプロイできるようにしました。次に資材を格納する Git リポジトリを作成します。</walkthrough-footnote>
 
 
@@ -542,7 +555,7 @@ gcloud source repos create container-handson
 Cloud Build に前の手順で作成した、プライベート Git リポジトリに push が行われたときに起動されるトリガーを作成します。
 
 ```bash
-gcloud beta builds triggers create cloud-source-repositories --description="containerhandson" --repo=container-handson --branch-pattern=".*" --build-config="container/cloudbuild.yaml"
+gcloud beta builds triggers create cloud-source-repositories --description="containerhandson" --repo=container-handson --branch-pattern=".*" --build-config="container-basic/cloudbuild.yaml"
 ```
 
 **GUI**: [ビルドトリガー](https://console.cloud.google.com/cloud-build/triggers?project={{project-id}})
@@ -648,6 +661,7 @@ echo "http://${SERVICE_IP}/bench1"
 main.go がアプリケーションのソースコードです。処理に時間がかかっているいくつかの行を削除し、保存します。
 
 **ヒント**: Stress とコメントがついています。
+また、**Bench Controller**というページの名前も変更してみましょう
 
 ### Git に修正をコミット、CSR にプッシュ
 
@@ -658,6 +672,12 @@ main.go がアプリケーションのソースコードです。処理に時間
 ### Cloud Build の自動実行を確認
 
 [Cloud Build の履歴](https://console.cloud.google.com/cloud-build/builds?project={{project-id}}) にアクセスし、git push コマンドを実行した時間にビルドが実行されていることを確認します。
+
+### Kubernetesのローリングアップデートの確認 ###
+サービスが停止することなく、新しいバージョンに入れ替わる様子が確認可能です
+```bash
+kubectl get pods -w
+```
 
 ### アプリケーションにアクセスし、すぐレスポンスがかえることを確認
 
