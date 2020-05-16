@@ -36,9 +36,9 @@ import (
 var projectID = ""
 
 const (
-	service        = "devops-demo"
+	service        = "container-demo"
 	serviceVersion = "1.0.0"
-	metricPrefix   = "devops-"
+	metricPrefix   = "container-"
 )
 
 // A IndexVariables represents variables used in a template (index.html)

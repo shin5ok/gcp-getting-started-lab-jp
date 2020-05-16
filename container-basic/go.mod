@@ -1,4 +1,4 @@
-module github.com/GoogleCloudPlatform/gcp-getting-started-lab-jp/devops/
+module github.com/GoogleCloudPlatform/gcp-getting-started-lab-jp/container/
 
 go 1.12
 

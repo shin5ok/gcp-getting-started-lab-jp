@@ -16,13 +16,13 @@ RUN go mod download
 
 # Copy all files and build an executable
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o devops_handson
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o container_handson
 
 # Use a Docker multi-stage build to create a lean production image
 FROM alpine:3.11.3
 RUN apk add --no-cache ca-certificates
-COPY --from=builder /app/devops_handson ./
+COPY --from=builder /app/container_handson ./
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/template ./template
 EXPOSE 8080
-ENTRYPOINT ["/devops_handson"]
+ENTRYPOINT ["/container_handson"]

@@ -457,7 +457,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 
 ## Cloud Profiler によるプロファイリング
 
-[プロファイラ](https://console.cloud.google.com/profiler/devops-demo;zone=asia-northeast1-c;version=1.0.0/cpu?project={{project-id}}) を開き、fibonacci という関数の処理にリソースが使われていることを確認します。
+[プロファイラ](https://console.cloud.google.com/profiler/container-demo;zone=asia-northeast1-c;version=1.0.0/cpu?project={{project-id}}) を開き、fibonacci という関数の処理にリソースが使われていることを確認します。
 
 ![Profiler](https://storage.googleapis.com/container-handson-for-github/StackdriverProfiler.png)
 
@@ -482,7 +482,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 まずアプリケーションのどこでそのログ出力をしているかを確認します。
 
 1. 画面右上にあるアイコン <walkthrough-cloud-shell-editor-icon></walkthrough-cloud-shell-editor-icon> をクリックし、Cloud Shell エディタを開きます。
-2. 次にエディタのエクスプローラーから `cloudshell_open/gcp-getting-started-lab-jp/devops/` とたどり、main.go ファイルを開きます。
+2. 次にエディタのエクスプローラーから `cloudshell_open/gcp-getting-started-lab-jp/container/` とたどり、main.go ファイルを開きます。
 3. 99 行目の log.XXXX という行が該当箇所です。
 
 ### 出力されたログの確認
@@ -542,7 +542,7 @@ gcloud source repos create container-handson
 Cloud Build に前の手順で作成した、プライベート Git リポジトリに push が行われたときに起動されるトリガーを作成します。
 
 ```bash
-gcloud beta builds triggers create cloud-source-repositories --description="devopshandson" --repo=container-handson --branch-pattern=".*" --build-config="devops/cloudbuild.yaml"
+gcloud beta builds triggers create cloud-source-repositories --description="containerhandson" --repo=container-handson --branch-pattern=".*" --build-config="container/cloudbuild.yaml"
 ```
 
 **GUI**: [ビルドトリガー](https://console.cloud.google.com/cloud-build/triggers?project={{project-id}})
@@ -727,7 +727,7 @@ gcloud container images list-tags gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson
 ### Cloud Build トリガーの削除
 
 ```bash
-gcloud beta builds triggers list --filter="description = devopshandson" --format="value(id)" | xargs -I{} gcloud beta builds triggers delete {} --quiet
+gcloud beta builds triggers list --filter="description = containerhandson" --format="value(id)" | xargs -I{} gcloud beta builds triggers delete {} --quiet
 ```
 
 ### ハンズオン資材の削除
