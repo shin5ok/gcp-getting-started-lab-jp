@@ -1,4 +1,4 @@
-# はじめてみよう DevOps ハンズオン
+# はじめてみよう Container ハンズオン
 
 ## Google Cloud Platform（GCP）プロジェクトの選択
 
@@ -142,7 +142,7 @@ gcloud services enable cloudbuild.googleapis.com sourcerepo.googleapis.com conta
 `dohandson` という名前で、ハンズオン専用のサービスアカウントを作成します。
 
 ```bash
-gcloud iam service-accounts create dohandson --display-name "DevOps HandsOn Service Account"
+gcloud iam service-accounts create dohandson --display-name "Container HandsOn Service Account"
 ```
 
 **ヒント**: サービスアカウントについての詳細は[こちら](https://cloud.google.com/iam/docs/service-accounts)をご参照ください。
