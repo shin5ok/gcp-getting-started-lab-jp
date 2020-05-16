@@ -45,6 +45,7 @@ const (
 type IndexVariables struct {
 	WebsiteTitle string
 	RandomNumber string
+	HostName     string
 }
 
 func logRequest(r *http.Request, traceID string, spanID string, msg string) {
@@ -148,6 +149,8 @@ func fibonacci(ctx context.Context, loopNum int) {
 var templates = template.Must(template.ParseFiles("./template/index.html"))
 
 func renderTemplate(w http.ResponseWriter, iv *IndexVariables) {
+	hostname, _ := os.Hostname()
+	iv.HostName = hostname
 	err := templates.Execute(w, iv)
 	if err != nil {
 		log.Printf("Failed to render a template: %v", err)
