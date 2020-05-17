@@ -191,6 +191,14 @@ gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT  --member serviceAc
 - コンテナの GKE へのデプロイ、外部公開
 - チャレンジ問題：もう一つの外部からのアクセス経路
 
+## サンプルアプリケーションの確認
+
+画面右上にあるアイコン <walkthrough-cloud-shell-editor-icon></walkthrough-cloud-shell-editor-icon> をクリックし、Cloud Shell エディタを開きます。
+右側のファイルツリーからファイルをクリックして、内容を表示、編集できます。
+
+### アプリケーションのコード、Dockerfileを確認します
+- main.go
+- Dockerfile
 
 ## サンプルアプリケーションのコンテナ化
 
@@ -244,6 +252,8 @@ docker ps
 ```bash
 docker logs -f $(docker ps -q)
 ```
+
+Ctrl+cで停止します
 
 <walkthrough-footnote>ローカル環境（Cloud Shell 内）で動いているコンテナにアクセスできました。次に GKE で動かすための準備を進めます。</walkthrough-footnote>
 
@@ -326,6 +336,9 @@ Kubernetes のデプロイ用設定ファイルを、コンテナレジストリ
 sed -i".org" -e "s/FIXME/$GOOGLE_CLOUD_PROJECT/g" gke-config/deployment.yaml
 ```
 
+gke-config/deployment.yamlを確認してください。
+
+
 <walkthrough-footnote>アプリケーションをクラスターにデプロイする準備ができました。次にデプロイを行います。</walkthrough-footnote>
 
 ## コンテナの GKE へのデプロイ、外部公開
@@ -404,6 +417,10 @@ COUNT=0; while [ $COUNT -lt 20 ]; do curl -s http://${SERVICE_IP}/bench1 > /dev/
 
 実はService の作成と同時に、Ingress というリソースも作成しています。
 
+```bash
+kubectl get ingress
+```
+
 ### Service と Ingress の違い
 
 双方ともグローバル IP アドレスを持たせ、稼働しているコンテナの前に配置でき、ロードバランサの役割を担います。
@@ -426,7 +443,11 @@ GUI で調査をする場合、以前の手順でアクセスしたページか�
 
 次のコマンドを実行して、Podをスケールアウトします
 ```bash
-kubectl scale deployment container-handson --replica=5
+kubectl scale deployment container-handson-deployment --replicas=5
+```
+Podの増加を確認します
+```bash
+kubectl get pods
 ```
 
 ### Ingressにアクセスし、5つのPodにロードバランスされていることを確認します
@@ -454,7 +475,7 @@ Operations を利用しアプリケーションのトラブルシューティン
 その情報を Cloud Trace から可視化することが可能です。
 
 1. [トレースリストのページ](https://console.cloud.google.com/traces/traces?project={{project-id}})にブラウザからアクセスし、リクエスト フィルタに `/bench1` を入力
-（**Preview**になっている場合は、**Classic**に切り替えてください）
+（**プレビュー**になっている場合は、**従来のログビューアを表示**で切り替えてください）
 2. リクエストが遅い Span（青丸）を確認
 3. ログを表示をクリック
 4. “I” と表示されるアイコンをクリックして、連携された Cloud logging のログを確認
@@ -505,7 +526,7 @@ Logging のページに遷移し、関連するログが表示されているこ
 サンプルアプリケーションでは context というオブジェクトの中身をログに出力しています。
 
 ここではそれがちゃんとログに出力されていることを確認します。
-（**Preview**になっている場合は、**Classic**に切り替えてください）
+（**プレビュー**になっている場合は、**従来のログビューアを表示**で切り替えてください）
 
 ### 出力箇所の確認
 
@@ -679,8 +700,8 @@ echo "http://${SERVICE_IP}/bench1"
 
 main.go がアプリケーションのソースコードです。処理に時間がかかっているいくつかの行を削除し、保存します。
 
-**ヒント**: Stress とコメントがついています。
-また、**Bench Controller**というページの名前も変更してみましょう
+**ヒント**: **Stress** とコメントがついています。
+また、**BenchController**というページの名前も変更してみましょう
 
 ### Git に修正をコミット、CSR にプッシュ
 
@@ -697,6 +718,7 @@ main.go がアプリケーションのソースコードです。処理に時間
 ```bash
 kubectl get pods -w
 ```
+Ctrl+cで停止します
 
 ### アプリケーションにアクセスし、すぐレスポンスがかえることを確認
 
@@ -704,6 +726,7 @@ kubectl get pods -w
 echo "http://${SERVICE_IP}/bench1"
 ```
 
+備考: Pod数は元に戻ります
 
 ## Congraturations!
 
