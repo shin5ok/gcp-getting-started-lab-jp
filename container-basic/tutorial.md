@@ -379,22 +379,24 @@ echo "http://${SERVICE_IP}/bench1"
 
 ![BrowserAccessToSlowBenchController](https://storage.googleapis.com/devops-handson-for-github/BrowserAccessToSlowBenchController.png)
 
+ChromeのDeveloper Toolsなどでご確認ください
+
 ### 擬似的にアクセス負荷をかける
 
-後のステップで確認する Cloud Profiler のサンプル数を稼ぐため、 `/bench1` に 50 回アクセスを行います。
+後のステップで確認する Cloud Profiler のサンプル数を稼ぐため、 `/bench1` に 20 回アクセスを行います。
 
 ```bash
-COUNT=0; while [ $COUNT -lt 50 ]; do curl -s http://${SERVICE_IP}/bench1 > /dev/null; echo $COUNT; COUNT=$(( COUNT + 1 )); done
+COUNT=0; while [ $COUNT -lt 20 ]; do curl -s http://${SERVICE_IP}/bench1 > /dev/null; echo $COUNT; COUNT=$(( COUNT + 1 )); done
 ```
 
 <walkthrough-footnote>特定のページへのアクセスに時間がかかることを確認し、そこに負荷をかけました。次になぜこのページが重いのかをトラブルシューティングします。</walkthrough-footnote>
 
 
-## チャレンジ問題：もう一つの外部からのアクセス経路
+## Ingressの確認
 
 前の手順では、作成した Service に対してインターネット経由でアクセスし、アプリケーションの動作を確認しました。
 
-しかし実は Service の作成と同時に、Ingress というリソースも作成しています。
+実はService の作成と同時に、Ingress というリソースも作成しています。
 
 ### Service と Ingress の違い
 
@@ -414,8 +416,19 @@ COUNT=0; while [ $COUNT -lt 50 ]; do curl -s http://${SERVICE_IP}/bench1 > /dev/
 **ヒント**: CLI で調査をする場合、Service で実施した情報取得の手順を参考にしてください。
 GUI で調査をする場合、以前の手順でアクセスしたページから IP アドレスを探して下さい。
 
+## スケールアウト
 
-## Operations を利用したアプリケーションの運用
+次のコマンドを実行して、Podをスケールアウトします
+```bash
+kubectl scale deployment container-handson --replica=5
+```
+
+### Ingressにアクセスし、5つのPodにロードバランスされていることを確認します
+
+画面右下にホスト名が表示されています
+ページをリロードするたびに、Pod内コンテナのホスト名が変わることが確認できます
+
+## Operations（旧名 Stackdriver） を利用したアプリケーションの運用
 
 <walkthrough-tutorial-duration duration=10></walkthrough-tutorial-duration>
 
