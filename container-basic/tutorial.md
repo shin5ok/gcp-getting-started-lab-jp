@@ -219,6 +219,12 @@ gcr.io/$GOOGLE_CLOUD_PROJECT/container-handson:v1
 
 **ヒント**: Cloud Shell 環境の 8080 ポートを、コンテナの 8080 ポートに紐付け、バックグラウンドで起動します。
 
+### コンテナの起動を確認します
+```bash
+docker ps
+```
+
+
 <walkthrough-footnote>アプリケーションをコンテナ化し、起動することができました。次に実際にアプリケーションにアクセスしてみます。</walkthrough-footnote>
 
 
