@@ -1,4 +1,4 @@
-# GCP Hands on materials for DevOps
+# GCP Hands on materials for Container
 
 **This is not an officially supported Google product**. This directory
 contains some scripts that are used to teach GCP beginners how

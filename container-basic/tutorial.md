@@ -674,7 +674,7 @@ main.go がアプリケーションのソースコードです。処理に時間
 [Cloud Build の履歴](https://console.cloud.google.com/cloud-build/builds?project={{project-id}}) にアクセスし、git push コマンドを実行した時間にビルドが実行されていることを確認します。
 
 ### Kubernetesのローリングアップデートの確認 ###
-サービスが停止することなく、新しいバージョンに入れ替わる様子が確認可能です
+サービスが停止することなく、新しいバージョンに入れ替わる様子が確認できます。
 ```bash
 kubectl get pods -w
 ```
